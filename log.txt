@@ -1,0 +1,216 @@
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config scene1_config_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.7253 IDF1=0.4125 (IDP=0.4730, IDR=0.3658) matches=6581 gt=11337 pred=8768 idtp=4147 idfp=4621 idfn=7190
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.7742 IDF1=0.4554 (IDP=0.4571, IDR=0.4537) matches=14298 gt=16587 pred=16464 idtp=7526 idfp=8938 idfn=9061
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.7289 IDF1=0.5417 (IDP=0.6688, IDR=0.4552) matches=28265 gt=53748 pred=36585 idtp=24468 idfp=12117 idfn=29280
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.7469 IDF1=0.2795 (IDP=0.4523, IDR=0.2022) matches=23892 gt=69093 pred=30893 idtp=13973 idfp=16920 idfn=55120
+[INFO] [OVERALL] MOTP=0.7434 IDF1=0.4117 (IDP=0.5405, IDR=0.3324) matches=73036 gt=150765 pred=92710 idtp=50114 idfp=42596 idfn=100651
+
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config scene2_config_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.7124 IDF1=0.3357 (IDP=0.3919, IDR=0.2936) matches=6069 gt=11337 pred=8492 idtp=3328 idfp=5164 idfn=8009
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.7503 IDF1=0.4071 (IDP=0.4141, IDR=0.4003) matches=12930 gt=16587 pred=16031 idtp=6639 idfp=9392 idfn=9948
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.7199 IDF1=0.4980 (IDP=0.6214, IDR=0.4155) matches=27169 gt=53748 pred=35935 idtp=22331 idfp=13604 idfn=31417
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.7356 IDF1=0.2515 (IDP=0.4311, IDR=0.1775) matches=20817 gt=69093 pred=28451 idtp=12264 idfp=16187 idfn=56829
+[INFO] [empty0] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty0] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty1] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty2] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty2] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty3] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [OVERALL] MOTP=0.7300 IDF1=0.3719 (IDP=0.5012, IDR=0.2956) matches=66985 gt=150765 pred=88909 idtp=44562 idfp=44347 idfn=106203
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config scene3_config_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.7122 IDF1=0.3386 (IDP=0.3946, IDR=0.2965) matches=5956 gt=11088 pred=8333 idtp=3288 idfp=5045 idfn=7800
+[INFO] [ch2] frames=1699 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.7507 IDF1=0.4115 (IDP=0.4183, IDR=0.4049) matches=12704 gt=16314 pred=15793 idtp=6606 idfp=9187 idfn=9708
+[INFO] [ch3] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.7196 IDF1=0.4974 (IDP=0.6216, IDR=0.4145) matches=26741 gt=53046 pred=35379 idtp=21990 idfp=13389 idfn=31056
+[INFO] [ch4] frames=1415 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.7363 IDF1=0.2514 (IDP=0.4314, IDR=0.1774) matches=20531 gt=68119 pred=28019 idtp=12086 idfp=15933 idfn=56033
+[INFO] [ch5] frames=1415 tick_ms=50 fps=24.994
+[INFO] [ch5] MOTP=0.7097 IDF1=0.1762 (IDP=0.2256, IDR=0.1445) matches=3750 gt=8206 pred=5257 idtp=1186 idfp=4071 idfn=7020
+[INFO] [ch6] frames=1699 tick_ms=50 fps=30.0
+[INFO] [ch6] MOTP=0.7510 IDF1=0.4227 (IDP=0.4661, IDR=0.3866) matches=44896 gt=65130 pred=54022 idtp=25182 idfp=28840 idfn=39948
+[INFO] [ch7] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch7] MOTP=0.7286 IDF1=0.5144 (IDP=0.6205, IDR=0.4393) matches=11022 gt=19672 pred=13928 idtp=8642 idfp=5286 idfn=11030
+[INFO] [ch8] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch8] MOTP=0.7318 IDF1=0.2835 (IDP=0.3540, IDR=0.2365) matches=14642 gt=26433 pred=17660 idtp=6251 idfp=11409 idfn=20182
+[INFO] [OVERALL] MOTP=0.7363 IDF1=0.3819 (IDP=0.4778, IDR=0.3180) matches=140242 gt=268008 pred=178391 idtp=85231 idfp=93160 idfn=182777
+
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config scene4_config_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.7105 IDF1=0.2802 (IDP=0.3538, IDR=0.2320) matches=5077 gt=11337 pred=7434 idtp=2630 idfp=4804 idfn=8707
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.7444 IDF1=0.3507 (IDP=0.3634, IDR=0.3388) matches=11615 gt=16587 pred=15465 idtp=5620 idfp=9845 idfn=10967
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.7150 IDF1=0.4635 (IDP=0.5858, IDR=0.3834) matches=25178 gt=53748 pred=35177 idtp=20607 idfp=14570 idfn=33141
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.7267 IDF1=0.2103 (IDP=0.3834, IDR=0.1449) matches=18214 gt=69093 pred=26108 idtp=10011 idfp=16097 idfn=59082
+[INFO] [empty0] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty0] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty1] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty2] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty2] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty3] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty4] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty4] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty5] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty5] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty6] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty6] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty7] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty7] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [OVERALL] MOTP=0.7239 IDF1=0.3309 (IDP=0.4617, IDR=0.2578) matches=60084 gt=150765 pred=84184 idtp=38868 idfp=45316 idfn=111897
+
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config scene5_config_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.7220 IDF1=0.3820 (IDP=0.4664, IDR=0.3234) matches=3657 gt=7251 pred=5028 idtp=2345 idfp=2683 idfn=4906
+[INFO] [ch2] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.7480 IDF1=0.4208 (IDP=0.4310, IDR=0.4110) matches=9527 gt=13164 pred=12555 idtp=5411 idfp=7144 idfn=7753
+[INFO] [ch3] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.7123 IDF1=0.4657 (IDP=0.5892, IDR=0.3850) matches=19848 gt=42988 pred=28092 idtp=16551 idfp=11541 idfn=26437
+[INFO] [ch4] frames=1166 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.7314 IDF1=0.2000 (IDP=0.3764, IDR=0.1362) matches=13557 gt=55284 pred=19995 idtp=7527 idfp=12468 idfn=47757
+[INFO] [ch5] frames=1166 tick_ms=50 fps=24.994
+[INFO] [ch5] MOTP=0.7067 IDF1=0.2096 (IDP=0.2726, IDR=0.1703) matches=2394 gt=6206 pred=3878 idtp=1057 idfp=2821 idfn=5149
+[INFO] [ch6] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch6] MOTP=0.7434 IDF1=0.3911 (IDP=0.4401, IDR=0.3520) matches=33329 gt=51767 pred=41403 idtp=18220 idfp=23183 idfn=33547
+[INFO] [ch7] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch7] MOTP=0.7239 IDF1=0.3671 (IDP=0.4510, IDR=0.3096) matches=7593 gt=16383 pred=11247 idtp=5072 idfp=6175 idfn=11311
+[INFO] [ch8] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch8] MOTP=0.7183 IDF1=0.2302 (IDP=0.2937, IDR=0.1893) matches=10621 gt=21630 pred=13941 idtp=4095 idfp=9846 idfn=17535
+[INFO] [ch9] frames=1119 tick_ms=50 fps=24.0
+[INFO] [ch9] MOTP=0.7667 IDF1=0.4153 (IDP=0.5160, IDR=0.3475) matches=12577 gt=23608 pred=15897 idtp=8203 idfp=7694 idfn=15405
+[INFO] [ch10] frames=699 tick_ms=50 fps=15.0
+[INFO] [ch10] MOTP=0.6649 IDF1=0.0648 (IDP=0.1345, IDR=0.0427) matches=6214 gt=44811 pred=14216 idtp=1912 idfp=12304 idfn=42899
+[INFO] [ch11] frames=933 tick_ms=50 fps=20.0
+[INFO] [ch11] MOTP=0.7314 IDF1=0.2338 (IDP=0.4388, IDR=0.1594) matches=7628 gt=28806 pred=10463 idtp=4591 idfp=5872 idfn=24215
+[INFO] [ch12] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch12] MOTP=0.7702 IDF1=0.4055 (IDP=0.4453, IDR=0.3722) matches=5301 gt=11108 pred=9284 idtp=4134 idfp=5150 idfn=6974
+[INFO] [OVERALL] MOTP=0.7324 IDF1=0.3109 (IDP=0.4254, IDR=0.2449) matches=132246 gt=323006 pred=185999 idtp=79118 idfp=106881 idfn=243888
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config gt_scene1_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.8588 IDF1=0.6782 (IDP=0.6854, IDR=0.6712) matches=10875 gt=11337 pred=11101 idtp=7609 idfp=3492 idfn=3728
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.8689 IDF1=0.7756 (IDP=0.7830, IDR=0.7684) matches=15979 gt=16587 pred=16277 idtp=12745 idfp=3532 idfn=3842
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.8770 IDF1=0.9009 (IDP=0.9070, IDR=0.8949) matches=52153 gt=53748 pred=53027 idtp=48097 idfp=4930 idfn=5651
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.8765 IDF1=0.5617 (IDP=0.5695, IDR=0.5542) matches=63926 gt=69093 pred=67236 idtp=38290 idfp=28946 idfn=30803
+[INFO] [OVERALL] MOTP=0.8745 IDF1=0.7154 (IDP=0.7230, IDR=0.7080) matches=142933 gt=150765 pred=147641 idtp=106741 idfp=40900 idfn=44024
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config gt_scene2_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.8235 IDF1=0.6249 (IDP=0.6400, IDR=0.6106) matches=10187 gt=11337 pred=10816 idtp=6922 idfp=3894 idfn=4415
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.8362 IDF1=0.5862 (IDP=0.5960, IDR=0.5767) matches=14676 gt=16587 pred=16051 idtp=9566 idfp=6485 idfn=7021
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.8396 IDF1=0.8020 (IDP=0.8107, IDR=0.7936) matches=50066 gt=53748 pred=52611 idtp=42652 idfp=9959 idfn=11096
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.8537 IDF1=0.4807 (IDP=0.5046, IDR=0.4590) matches=55720 gt=69093 pred=62853 idtp=31716 idfp=31137 idfn=37377
+[INFO] [empty0] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty0] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty1] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty2] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty2] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty3] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [OVERALL] MOTP=0.8440 IDF1=0.6200 (IDP=0.6383, IDR=0.6026) matches=130649 gt=150765 pred=142331 idtp=90856 idfp=51475 idfn=59909
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config gt_scene3_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.8227 IDF1=0.6251 (IDP=0.6408, IDR=0.6102) matches=9941 gt=11088 pred=10559 idtp=6766 idfp=3793 idfn=4322
+[INFO] [ch2] frames=1699 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.8356 IDF1=0.5921 (IDP=0.6020, IDR=0.5825) matches=14412 gt=16314 pred=15785 idtp=9503 idfp=6282 idfn=6811
+[INFO] [ch3] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.8395 IDF1=0.8038 (IDP=0.8126, IDR=0.7952) matches=49382 gt=53046 pred=51909 idtp=42180 idfp=9729 idfn=10866
+[INFO] [ch4] frames=1415 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.8533 IDF1=0.4771 (IDP=0.5011, IDR=0.4553) matches=54856 gt=68119 pred=61899 idtp=31017 idfp=30882 idfn=37102
+[INFO] [ch5] frames=1415 tick_ms=50 fps=24.994
+[INFO] [ch5] MOTP=0.7504 IDF1=0.2075 (IDP=0.2252, IDR=0.1924) matches=5032 gt=8206 pred=7013 idtp=1579 idfp=5434 idfn=6627
+[INFO] [ch6] frames=1699 tick_ms=50 fps=30.0
+[INFO] [ch6] MOTP=0.8568 IDF1=0.6928 (IDP=0.7064, IDR=0.6798) matches=58749 gt=65130 pred=62674 idtp=44274 idfp=18400 idfn=20856
+[INFO] [ch7] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch7] MOTP=0.7882 IDF1=0.5818 (IDP=0.6210, IDR=0.5472) matches=14379 gt=19672 pred=17335 idtp=10765 idfp=6570 idfn=8907
+[INFO] [ch8] frames=1416 tick_ms=50 fps=25.0
+[INFO] [ch8] MOTP=0.8099 IDF1=0.4204 (IDP=0.4353, IDR=0.4066) matches=21566 gt=26433 pred=24689 idtp=10747 idfp=13942 idfn=15686
+[INFO] [OVERALL] MOTP=0.8383 IDF1=0.6033 (IDP=0.6227, IDR=0.5852) matches=228317 gt=268008 pred=251863 idtp=156831 idfp=95032 idfn=111177
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config gt_scene4_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.8038 IDF1=0.5440 (IDP=0.5605, IDR=0.5284) matches=9504 gt=11337 pred=10689 idtp=5991 idfp=4698 idfn=5346
+[INFO] [ch2] frames=1720 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.8211 IDF1=0.4698 (IDP=0.4817, IDR=0.4585) matches=13753 gt=16587 pred=15788 idtp=7605 idfp=8183 idfn=8982
+[INFO] [ch3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.8191 IDF1=0.7231 (IDP=0.7376, IDR=0.7092) matches=47027 gt=53748 pred=51682 idtp=38120 idfp=13562 idfn=15628
+[INFO] [ch4] frames=1433 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.8345 IDF1=0.4449 (IDP=0.4822, IDR=0.4130) matches=49591 gt=69093 pred=59175 idtp=28532 idfp=30643 idfn=40561
+[INFO] [empty0] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty0] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty1] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty1] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty2] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty2] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty3] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty3] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty4] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty4] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty5] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty5] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty6] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty6] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [empty7] frames=1434 tick_ms=50 fps=25.0
+[INFO] [empty7] MOTP=NA IDF1=NA (IDP=NA, IDR=NA) matches=0 gt=0 pred=0 idtp=0 idfp=0 idfn=0
+[INFO] [OVERALL] MOTP=0.8245 IDF1=0.5571 (IDP=0.5843, IDR=0.5323) matches=119875 gt=150765 pred=137334 idtp=80248 idfp=57086 idfn=70517
+
+(track) D:\track\hieve_sim_project_v10>python run_hieve_sim.py --config gt_scene5_fps_fixed.json --out-dir outputs --seed 123
+[INFO] [ch1] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch1] MOTP=0.8109 IDF1=0.6074 (IDP=0.6273, IDR=0.5887) matches=6247 gt=7251 pred=6805 idtp=4269 idfp=2536 idfn=2982
+[INFO] [ch2] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch2] MOTP=0.8147 IDF1=0.5631 (IDP=0.5772, IDR=0.5496) matches=11028 gt=13164 pred=12534 idtp=7235 idfp=5299 idfn=5929
+[INFO] [ch3] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch3] MOTP=0.8165 IDF1=0.7526 (IDP=0.7692, IDR=0.7368) matches=37133 gt=42988 pred=41180 idtp=31674 idfp=9506 idfn=11314
+[INFO] [ch4] frames=1166 tick_ms=50 fps=24.988
+[INFO] [ch4] MOTP=0.8122 IDF1=0.3877 (IDP=0.4281, IDR=0.3543) matches=36905 gt=55284 pred=45746 idtp=19586 idfp=26160 idfn=35698
+[INFO] [ch5] frames=1166 tick_ms=50 fps=24.994
+[INFO] [ch5] MOTP=0.7368 IDF1=0.2224 (IDP=0.2514, IDR=0.1995) matches=3161 gt=6206 pred=4925 idtp=1238 idfp=3687 idfn=4968
+[INFO] [ch6] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch6] MOTP=0.8364 IDF1=0.6408 (IDP=0.6616, IDR=0.6212) matches=43897 gt=51767 pred=48603 idtp=32158 idfp=16445 idfn=19609
+[INFO] [ch7] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch7] MOTP=0.7755 IDF1=0.4578 (IDP=0.5066, IDR=0.4176) matches=10020 gt=16383 pred=13507 idtp=6842 idfp=6665 idfn=9541
+[INFO] [ch8] frames=1166 tick_ms=50 fps=25.0
+[INFO] [ch8] MOTP=0.7808 IDF1=0.3254 (IDP=0.3452, IDR=0.3078) matches=15686 gt=21630 pred=19285 idtp=6657 idfp=12628 idfn=14973
+[INFO] [ch9] frames=1119 tick_ms=50 fps=24.0
+[INFO] [ch9] MOTP=0.8686 IDF1=0.6203 (IDP=0.6641, IDR=0.5818) matches=16947 gt=23608 pred=20683 idtp=13736 idfp=6947 idfn=9872
+[INFO] [ch10] frames=699 tick_ms=50 fps=15.0
+[INFO] [ch10] MOTP=0.7407 IDF1=0.1911 (IDP=0.2161, IDR=0.1713) matches=20264 gt=44811 pred=35512 idtp=7674 idfp=27838 idfn=37137
+[INFO] [ch11] frames=933 tick_ms=50 fps=20.0
+[INFO] [ch11] MOTP=0.7985 IDF1=0.4338 (IDP=0.4699, IDR=0.4029) matches=19231 gt=28806 pred=24699 idtp=11606 idfp=13093 idfn=17200
+[INFO] [ch12] frames=1399 tick_ms=50 fps=30.0
+[INFO] [ch12] MOTP=0.9067 IDF1=0.9162 (IDP=0.9395, IDR=0.8940) matches=10110 gt=11108 pred=10571 idtp=9931 idfp=640 idfn=1177
+[INFO] [OVERALL] MOTP=0.8137 IDF1=0.5028 (IDP=0.5373, IDR=0.4725) matches=230629 gt=323006 pred=284050 idtp=152606 idfp=131444 idfn=170400
+
+

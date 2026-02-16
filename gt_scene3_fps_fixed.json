@@ -1,0 +1,57 @@
+{
+  "tick_ms": 50,
+  "iou_thr": 0.5,
+  "det_score_thr": 0.1,
+  "tracker_cfg": {},
+  "sources": [
+    {
+      "name": "ch1",
+      "fps": 25.0,
+      "gt": "dat/gt/1.txt",
+      "det": "dat/gt/1.txt"
+    },
+    {
+      "name": "ch2",
+      "fps": 30.0,
+      "gt": "dat/gt/2.txt",
+      "det": "dat/gt/2.txt"
+    },
+    {
+      "name": "ch3",
+      "fps": 25.0,
+      "gt": "dat/gt/3.txt",
+      "det": "dat/gt/3.txt"
+    },
+    {
+      "name": "ch4",
+      "fps": 24.988,
+      "gt": "dat/gt/5.txt",
+      "det": "dat/gt/5.txt"
+    },
+    {
+      "name": "ch5",
+      "fps": 24.994,
+      "gt": "dat/gt/6.txt",
+      "det": "dat/gt/6.txt"
+    },
+    {
+      "name": "ch6",
+      "fps": 30.0,
+      "gt": "dat/gt/8.txt",
+      "det": "dat/gt/8.txt"
+    },
+    {
+      "name": "ch7",
+      "fps": 25.0,
+      "gt": "dat/gt/10.txt",
+      "det": "dat/gt/10.txt"
+    },
+    {
+      "name": "ch8",
+      "fps": 25.0,
+      "gt": "dat/gt/13.txt",
+      "det": "dat/gt/13.txt"
+    }
+  ],
+  "empty_channels": 0
+}

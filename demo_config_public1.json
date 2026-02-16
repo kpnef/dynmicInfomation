@@ -1,0 +1,20 @@
+{
+  "tick_ms": 50,
+  "iou_thr": 0.5,
+  "det_score_thr": 0.1,
+  "tracker_cfg": {},
+  "sources": [
+    {
+      "name": "cam0_public1",
+      "gt": "demo/hieve_gt_example.txt",
+      "det": "demo/public_det_1.txt",
+      "fps": 30.0
+    },
+    {
+      "name": "cam1_empty_by_null",
+      "gt": null,
+      "det": "demo/public_det_1.txt",
+      "fps": 25.0
+    }
+  ]
+}
