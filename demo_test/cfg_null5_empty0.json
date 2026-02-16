@@ -1,0 +1,45 @@
+{
+  "tick_ms": 50,
+  "iou_thr": 0.5,
+  "det_score_thr": 0.1,
+  "tracker_cfg": {},
+  "sources": [
+    {
+      "name": "ch0",
+      "fps": 30,
+      "gt": "gt.txt",
+      "det": "det.txt"
+    },
+    {
+      "name": "null0",
+      "fps": 30,
+      "gt": null,
+      "det": null
+    },
+    {
+      "name": "null1",
+      "fps": 30,
+      "gt": null,
+      "det": null
+    },
+    {
+      "name": "null2",
+      "fps": 30,
+      "gt": null,
+      "det": null
+    },
+    {
+      "name": "null3",
+      "fps": 30,
+      "gt": null,
+      "det": null
+    },
+    {
+      "name": "null4",
+      "fps": 30,
+      "gt": null,
+      "det": null
+    }
+  ],
+  "empty_channels": 0
+}

@@ -1,0 +1,14 @@
+{
+  "tick_ms": 50,
+  "iou_thr": 0.5,
+  "det_score_thr": 0.1,
+  "empty_channels": 3,
+  "sources": [
+    {
+      "name": "main",
+      "fps": 30,
+      "gt": "gt.txt",
+      "det": "det.txt"
+    }
+  ]
+}

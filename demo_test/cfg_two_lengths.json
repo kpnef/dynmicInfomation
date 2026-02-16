@@ -1,0 +1,23 @@
+{
+  "tick_ms": 50,
+  "iou_thr": 0.5,
+  "det_score_thr": 0.1,
+  "tracker_cfg": {},
+  "empty_channels": 3,
+  "sources": [
+    {
+      "name": "short",
+      "fps": 30,
+      "gt": "gt.txt",
+      "det": "det.txt",
+      "num_frames": 600
+    },
+    {
+      "name": "long",
+      "fps": 30,
+      "gt": "gt.txt",
+      "det": "det.txt",
+      "num_frames": 1200
+    }
+  ]
+}
