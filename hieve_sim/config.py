@@ -32,10 +32,27 @@ class SourceConfig:
 @dataclass(frozen=True)
 class ProjectConfig:
     tick_ms: int
+    # IoU threshold used for evaluation metrics (MOTP/IDF1).
+    metric_iou_thr: float
+    # IoU threshold used for dynamic-weight gating (boost/decay/retro).
+    gate_iou_thr: float
+    # Legacy single IoU threshold (kept for backward compatibility); equals metric_iou_thr by default.
     iou_thr: float
+    # Robust min-IoU percentile for dynamic-weight gating; default 0.95 means ignore worst ~5% DETs.
+    iou_min_top_pct: float
     det_score_thr: float
+    # Additional score threshold used ONLY for the dynamic-weight IoU gate.
+    # If None, the IoU gate will auto-follow the ByteTrack "high/new" threshold
+    # so the IoU matching uses the same detection subset that can actually
+    # initialize/drive tracks.
+    iou_det_score_thr: Optional[float]
     tracker_cfg: Dict[str, Any]
     sources: List[SourceConfig]
+    # If true, force ByteTrack score thresholds (track_high/new/low) to align
+    # with the same score threshold used by the IoU gate / DET ingestion.
+    # This prevents a persistent "det exists but no track can be created" gap
+    # when det_score_thr is much lower than ByteTrack's new/track_high thresholds.
+    align_tracker_thr: bool = False
     max_frames: int = 0  # optional global fallback length
     empty_channels: int = 0  # auto-insert N empty streams (scheduled, no objects)
     sim_duration_ms: int = 0  # optional requested duration (0 => auto=min across channels)
@@ -61,7 +78,27 @@ def load_config(config_path: str) -> Tuple[ProjectConfig, Path]:
 
     tick_ms = int(raw.get("tick_ms", 100))
     iou_thr = float(raw.get("iou_thr", 0.5))
+    # New: allow separating evaluation IoU threshold vs dynamic-gate IoU threshold.
+    metric_iou_thr = raw.get("metric_iou_thr", raw.get("metric-iou-thr", None))
+    gate_iou_thr = raw.get("gate_iou_thr", raw.get("gate-iou-thr", None))
+    metric_iou_thr = float(metric_iou_thr) if metric_iou_thr is not None else float(iou_thr)
+    gate_iou_thr = float(gate_iou_thr) if gate_iou_thr is not None else float(iou_thr)
+    # Keep legacy field in-sync.
+    iou_thr = float(metric_iou_thr)
+    # Robust min-IoU percentile for dynamic-weight gating.
+    iou_min_top_pct = raw.get("iou_min_top_pct", raw.get("min_iou_top_pct", raw.get("iou_top_pct", 0.95)))
+    if iou_min_top_pct is None:
+        iou_min_top_pct = 0.95
+    iou_min_top_pct = float(iou_min_top_pct)
+    if iou_min_top_pct <= 0.0:
+        iou_min_top_pct = 0.95
+    if iou_min_top_pct > 1.0:
+        iou_min_top_pct = 1.0
     det_score_thr = float(raw.get("det_score_thr", 0.0))
+    iou_det_score_thr = raw.get("iou_det_score_thr", None)
+    if iou_det_score_thr is not None:
+        iou_det_score_thr = float(iou_det_score_thr)
+    align_tracker_thr = bool(raw.get("align_tracker_thr", False) or raw.get("align_tracker_thresholds", False))
     tracker_cfg = raw.get("tracker_cfg", {})
     if tracker_cfg is None:
         tracker_cfg = {}
@@ -138,10 +175,15 @@ def load_config(config_path: str) -> Tuple[ProjectConfig, Path]:
 
     cfg = ProjectConfig(
         tick_ms=tick_ms,
+        metric_iou_thr=metric_iou_thr,
+        gate_iou_thr=gate_iou_thr,
         iou_thr=iou_thr,
+        iou_min_top_pct=iou_min_top_pct,
         det_score_thr=det_score_thr,
+        iou_det_score_thr=iou_det_score_thr,
         tracker_cfg=tracker_cfg,
         sources=sources,
+        align_tracker_thr=align_tracker_thr,
         max_frames=max_frames,
         empty_channels=empty_channels,
         sim_duration_ms=sim_duration_ms,

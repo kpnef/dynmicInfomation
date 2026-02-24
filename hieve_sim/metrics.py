@@ -65,7 +65,7 @@ class MOTMetrics:
     total_matches: int
 
 
-def compute_motp_idf1(
+def compute_motp_idf1_simple(
     gt_frames: List[BoxList],
     pred_frames: List[BoxList],
     *,
@@ -184,3 +184,94 @@ def pretty_float(v: Optional[float], fmt: str = ".4f") -> str:
     if v is None:
         return "NA"
     return format(v, fmt)
+
+
+
+def compute_motp_idf1(
+    gt_frames: List[BoxList],
+    pred_frames: List[BoxList],
+    *,
+    iou_thr: float = 0.5,
+    backend: str = "simple",
+) -> MOTMetrics:
+    """Compute MOTP/IDF1/IDP/IDR for a (GT, pred) sequence.
+
+    Backends:
+      - simple: built-in implementation (Hungarian IoU matching per frame + global ID mapping).
+      - motmetrics: use the 3rd-party `motmetrics` library (if installed). This is useful for
+        external validation / authority in papers. If the library is missing, this will raise
+        a clear ImportError with installation hints.
+
+    Notes:
+      - For IoU-based evaluation, we report MOTP as mean IoU over matched pairs (MOTChallenge-style).
+        motmetrics internally reports 'motp' as average *distance*; with IoU distance = 1 - IoU,
+        we convert back via (1 - motp_distance).
+    """
+    backend = str(backend or "simple").strip().lower()
+    if backend in {"simple", "builtin"}:
+        return compute_motp_idf1_simple(gt_frames, pred_frames, iou_thr=iou_thr)
+
+    if backend in {"motmetrics", "mm"}:
+        try:
+            import numpy as np
+            import motmetrics as mm  # type: ignore
+        except Exception as e:
+            raise ImportError(
+                "metrics-backend=motmetrics requested, but 'motmetrics' is not installed. "
+                "Install it on your machine with:  pip install motmetrics"
+            ) from e
+
+        acc = mm.MOTAccumulator(auto_id=True)
+        iou_thr_f = float(iou_thr)
+
+        # motmetrics uses distances; for IoU, distance = 1 - IoU. Allow assignments only if IoU >= iou_thr.
+        max_iou_dist = 1.0 - iou_thr_f
+
+        n = min(len(gt_frames), len(pred_frames))
+        for t in range(n):
+            gt = gt_frames[t]
+            pr = pred_frames[t]
+            gt_ids = [int(gid) for gid, _ in gt]
+            pr_ids = [int(pid) for pid, _ in pr]
+            gt_boxes = np.array([ltwh for _, ltwh in gt], dtype=float) if gt else np.zeros((0, 4), dtype=float)
+            pr_boxes = np.array([ltwh for _, ltwh in pr], dtype=float) if pr else np.zeros((0, 4), dtype=float)
+
+            dist = mm.distances.iou_matrix(gt_boxes, pr_boxes, max_iou=max_iou_dist)  # expects ltwh
+            acc.update(gt_ids, pr_ids, dist)
+
+        mh = mm.metrics.create()
+        res = mh.compute(
+            acc,
+            metrics=[
+                "motp", "idf1", "idp", "idr",
+                "num_matches", "num_objects", "num_predictions",
+                "idtp", "idfp", "idfn",
+            ],
+            name="seq",
+        )
+
+        motp_dist = float(res.loc["seq", "motp"]) if not np.isnan(res.loc["seq", "motp"]) else None
+        motp_iou = (1.0 - motp_dist) if motp_dist is not None else None
+
+        def _f(key: str) -> Optional[float]:
+            v = res.loc["seq", key]
+            return float(v) if not np.isnan(v) else None
+
+        def _i(key: str) -> int:
+            v = res.loc["seq", key]
+            return int(v) if not np.isnan(v) else 0
+
+        return MOTMetrics(
+            motp=motp_iou,
+            idf1=_f("idf1"),
+            idp=_f("idp"),
+            idr=_f("idr"),
+            idtp=_i("idtp"),
+            idfp=_i("idfp"),
+            idfn=_i("idfn"),
+            total_gt=_i("num_objects"),
+            total_pred=_i("num_predictions"),
+            total_matches=_i("num_matches"),
+        )
+
+    raise ValueError(f"Unknown metrics backend: {backend!r}. Expected one of: simple, motmetrics")

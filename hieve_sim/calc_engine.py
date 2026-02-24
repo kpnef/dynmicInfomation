@@ -54,7 +54,7 @@ class CallbackContext:
 
     # Optional: allow changing weights (not used in this project by default)
     def boost_weight(self) -> int:
-        return self._engine._set_weight(self._channel.ch_id, self._channel.weight * 2)
+        return self._engine._set_weight(self._channel.ch_id, self._channel.weight * 4)
 
     def decay_weight(self) -> int:
         return self._engine._set_weight(self._channel.ch_id, max(1, self._channel.weight // 2))
@@ -97,7 +97,7 @@ class AISimEngine:
         for i, (w, bt) in enumerate(zip(channel_weights, channel_bytetracks)):
             w = int(w)
             if w < 1 or w > 4:
-                raise ValueError(f"Initial weight out of range [1,32]: ch={i}, weight={w}")
+                raise ValueError(f"Initial weight out of range [1,4]: ch={i}, weight={w}")
             fps = float(channel_fps[i]) if channel_fps is not None else 30.0
             num_frames = int(channel_num_frames[i]) if channel_num_frames is not None else 0
             self._channels.append(ChannelState(ch_id=i, weight=w, bytetrack=bt, fps=fps, num_frames=num_frames))
@@ -136,7 +136,7 @@ class AISimEngine:
     @property
     def max_weight(self) -> int:
         # Keep consistent with the clamp in _set_weight
-        return 8
+        return 4
 
     def _rebuild_schedule_locked(self) -> None:
         """Build a weighted schedule table (each channel repeated by weight).

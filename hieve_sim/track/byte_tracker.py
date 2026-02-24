@@ -136,8 +136,7 @@ class STrack(BaseTrack):
         #
         # Therefore we mark new tracks as activated immediately, regardless of frame_id.
         self.state = TrackState.Tracked
-        if frame_id == 1:
-            self.is_activated = True
+        self.is_activated = True
         self.frame_id = frame_id
         self.start_frame = frame_id
 
