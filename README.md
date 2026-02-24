@@ -5,7 +5,7 @@
 1. **读取 HIEVE Track1 (MOT 格式) 标注(GT)**，默认每个视频起点时间 = 0。
 2. **融合 calc.py 风格的计算框架**，用“虚拟时间轴(ms)”驱动多通道调度：每个 tick 只处理一个通道（等权），从而得到**稀疏帧**的检测输入。
 3. 稀疏输入下，调用 **ByteTrack.update(..., n=gap_frames)** 进行多步 KF 预测，并通过 `pop_box_history()` 拿到**每一步预测框**，从而补全为**全帧输出**（与标注帧数等长）。
-4. 对“预测输出 vs 标注”做 **MOTP + IDF1**（轻量实现，Hungarian + IoU 阈值）。
+4. 对“预测输出 vs 标注”做 **MOTP + IDF1**：默认使用内置轻量实现（Hungarian + IoU 阈值），也支持使用第三方 `motmetrics` 进行外部验证。
 5. ByteTrack Update 被直接引用；calc 引擎已融合成项目代码的一部分。
 
 ## 目录结构
@@ -28,6 +28,8 @@
 {
   "tick_ms": 300,
   "iou_thr": 0.5,
+  "metric_iou_thr": 0.5,
+  "gate_iou_thr": 0.5,
   "det_score_thr": 0.1,
   "tracker_cfg": {
     "track_high_thresh": 0.6,
@@ -49,6 +51,10 @@
 ```
 
 说明：
+- `metric_iou_thr`：可选；**评估指标**(MOTP/IDF1)的 IoU 阈值。
+- `gate_iou_thr`：可选；**动态权重触发判据**(boost/decay/retro)的 IoU 阈值。
+- `iou_thr`：兼容字段；若未提供上述两个字段，则两个阈值都默认使用 `iou_thr`。
+
 - `sources[]`：数组元素对应一个“真实视频源”
   - `gt`：相对路径（相对 **config.json 所在目录**）
   - `det`：相对路径（相对 **config.json 所在目录**）
@@ -76,7 +82,11 @@
 python run_hieve_sim.py --config demo_config.json --save-pred --out-dir outputs
 ```
 
-> 说明：为满足“det 必须来自 det 文件”的项目约束，旧的 `--labels`（GT 当 det）模式已禁用。
+> 说明：
+- `metric_iou_thr`：可选；**评估指标**(MOTP/IDF1)的 IoU 阈值。
+- `gate_iou_thr`：可选；**动态权重触发判据**(boost/decay/retro)的 IoU 阈值。
+- `iou_thr`：兼容字段；若未提供上述两个字段，则两个阈值都默认使用 `iou_thr`。
+为满足“det 必须来自 det 文件”的项目约束，旧的 `--labels`（GT 当 det）模式已禁用。
 
 
 ## Empty channels (compute dilution experiment)
@@ -97,3 +107,19 @@ Example:
 ```bash
 python run_hieve_sim.py --config your_config.json --empty-channels 4
 ```
+
+
+## 评估库选择（提升权威性）
+
+默认指标实现为内置版本（便于快速跑通）。如果你需要论文/报告中更“权威”的第三方实现，可使用 `motmetrics`：
+
+```bash
+pip install motmetrics
+python run_hieve_sim.py --config your_config.json --metrics-backend motmetrics
+```
+
+命令行阈值优先级（从高到低）：
+1) `--metric-iou-thr` / `--gate-iou-thr`
+2) `--iou-thr`（会同时覆盖 metric 与 gate）
+3) `config.json` 中的 `metric_iou_thr` / `gate_iou_thr`
+4) `config.json` 中的 `iou_thr`（兼容字段）

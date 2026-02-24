@@ -1,0 +1,59 @@
+hieve_sim_project_dyn_v8 - CHANGE LIST (patched)
+
+日期: 2026-02-22
+
+1) 指标评估 IoU 阈值 与 动态权重触发 IoU 阈值解耦
+- 新增配置字段:
+  - metric_iou_thr: 用于 MOTP/IDF1 等评估指标匹配阈值
+  - gate_iou_thr: 用于 dyn / dyn-retro 的权重提升/回溯/降权触发阈值
+  - iou_thr: 兼容字段（默认等同于 metric_iou_thr；当 metric/gate 未提供时作为两者默认值）
+- 修改文件:
+  - hieve_sim/config.py: ProjectConfig 增加 metric_iou_thr / gate_iou_thr；load_config 支持读取并保持向后兼容
+  - hieve_sim/simulator.py: 使用 metric_iou_thr_eff 计算 MOTP/IDF1；使用 gate_iou_thr_eff 做动态权重判据
+  - hieve_sim/cli.py: 新增 --metric-iou-thr / --gate-iou-thr；保留 --iou-thr 作为 legacy（默认同时覆盖两者）
+
+2) 支持第三方公开评估库（提升实验“权威性”）
+- 新增命令行参数: --metrics-backend {simple,motmetrics}
+  - simple: 内置轻量实现（默认）
+  - motmetrics: 3rd-party（需要 pip install motmetrics）
+- 修改文件:
+  - hieve_sim/metrics.py:
+    - 原 compute_motp_idf1 改名为 compute_motp_idf1_simple
+    - 新增 compute_motp_idf1 wrapper，根据 backend 选择内置或 motmetrics，并统一返回 MOTMetrics
+  - hieve_sim/simulator.py: compute_motp_idf1(..., backend=metrics_backend)
+  - hieve_sim/cli.py: 将 args.metrics_backend 传入 simulator
+
+3) 修复权重初始化/范围/衰减实现与日志一致性问题（影响你观察到的“权重一直是 4”现象）
+- 修复点:
+  - 初始化时不再把每个通道权重强制设为 4，改为按 config 的 init_weights 生效
+  - 权重范围校验与报错信息统一为 [1,4]
+  - decay_weight 使用整数 //2（与权重离散档位一致）
+  - max_weight 统一为 4（与 _set_weight clamp 一致）
+- 修改文件:
+  - hieve_sim/calc_engine.py
+
+4) 修复 fast-path（无 det 且无 track）分支的日志时序与缺失
+- 之前问题:
+  - 先写日志、后 decay，会导致日志里出现 weight_before=4 weight_after=4，但实际上下一时刻权重已变
+  - fast-path 权重变化不会写入 weight_adjust / iou_id，导致你难以定位“为什么变了”
+- 现在:
+  - fast-path 先 decay，再写 weight_rows / iou_id，保证记录反映真实权重
+  - fast-path 增加 weight_adjust 记录（reason=empty_det_and_no_tracks，trigger=empty_det）
+- 修改文件:
+  - hieve_sim/simulator.py
+
+5) 日志增强（便于复现实验与排查）
+- iou_id / weight_adjust 日志增加:
+  - metric_iou_thr 与 gate_iou_thr（让你明确：指标阈值 与 权重门限阈值已分离）
+- 修改文件:
+  - hieve_sim/simulator.py
+
+6) 文档更新
+- README.md 增加:
+  - metric_iou_thr / gate_iou_thr 的说明
+  - motmetrics 使用方式（pip install + --metrics-backend motmetrics）
+
+兼容性说明
+- 旧 config.json 只写 iou_thr 仍可用：metric_iou_thr 与 gate_iou_thr 默认都取 iou_thr
+- 旧命令行只用 --iou-thr 仍可用：默认同时覆盖 metric 与 gate；也可用新参数单独覆盖
+

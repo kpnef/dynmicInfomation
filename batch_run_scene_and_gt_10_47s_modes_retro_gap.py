@@ -83,7 +83,7 @@ def _jsonable(x: Any) -> Any:
     return x
 
 
-def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim_cap_ms: int = SIM_DURATION_CAP_MS, run_mode: str = "static", evolution_steps: int = 0, weight_log_dir: Optional[str] = None, retro_max_gap_ms: Optional[int] = None) -> Dict[str, Any]:
+def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim_cap_ms: int = SIM_DURATION_CAP_MS, run_mode: str = "static", evolution_steps: int = 0, weight_log_dir: Optional[str] = None, retro_max_gap_ms: Optional[int] = None, iou_min_top_pct: float = 0.95) -> Dict[str, Any]:
     cfg, base_dir = load_config(str(config_path))
 
     tick_ms = int(cfg.tick_ms)
@@ -184,6 +184,7 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim
     sim_kwargs: Dict[str, Any] = dict(
         tick_ms=tick_ms,
         iou_thr=iou_thr,
+        iou_min_top_pct=float(iou_min_top_pct),
         tracker_cfg=tracker_cfg,
         seed=int(seed),
         verbose_engine=False,
@@ -294,6 +295,9 @@ def main() -> int:
         description="Batch-run 5 scene configs + 5 gt-scene configs and write compact summaries."
     )
     ap.add_argument("--seed", type=int, default=0, help="Random seed for scheduling.")
+
+    ap.add_argument("--iou-min-top-pct", type=float, default=0.95,
+                    help="Robust min-IoU percentile on DET side for dynamic-weight gating (default 0.95)")
     ap.add_argument(
         "--mode",
         type=str,
@@ -377,6 +381,7 @@ def main() -> int:
                     run_mode=mode,
                     evolution_steps=int(args.evolution_steps),
                     weight_log_dir=weight_log_dir,
+                    iou_min_top_pct=float(args.iou_min_top_pct),
                     retro_max_gap_ms=(int(args.retro_max_gap_ms) if int(args.retro_max_gap_ms) > 0 else None),
                 )
             )

@@ -83,10 +83,25 @@ def _jsonable(x: Any) -> Any:
     return x
 
 
-def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim_cap_ms: int = SIM_DURATION_CAP_MS, run_mode: str = "static", evolution_steps: int = 0, weight_log_dir: Optional[str] = None) -> Dict[str, Any]:
+def run_one_config(
+    config_path: Path,
+    *,
+    seed: int = 0,
+    max_frames: int = 0,
+    sim_cap_ms: int = SIM_DURATION_CAP_MS,
+    sim_ms_override: int = 0,
+    run_mode: str = "static",
+    evolution_steps: int = 0,
+    weight_log_dir: Optional[str] = None,
+    tick_ms_override: int = 0,
+    iou_min_top_pct: float = 0.95,
+) -> Dict[str, Any]:
     cfg, base_dir = load_config(str(config_path))
 
+    # Allow CLI override of tick_ms. If not provided, follow config.
     tick_ms = int(cfg.tick_ms)
+    if int(tick_ms_override) > 0:
+        tick_ms = int(tick_ms_override)
     iou_thr = float(cfg.iou_thr)
     det_score_thr = float(cfg.det_score_thr)
     tracker_cfg = dict(cfg.tracker_cfg or {})
@@ -138,10 +153,13 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim
     if total_ms > int(sim_cap_ms):
         total_ms = int(sim_cap_ms)
 
-# Optional requested duration in config (can only shorten).
-    req_ms = int(getattr(cfg, "sim_duration_ms", 0) or 0)
+    # Optional requested duration:
+    # - If CLI provided --sim-ms, it overrides config.sim_duration_ms.
+    # - Otherwise, config.sim_duration_ms can only shorten.
+    req_ms_cfg = int(getattr(cfg, "sim_duration_ms", 0) or 0)
+    req_ms = int(sim_ms_override) if int(sim_ms_override) > 0 else req_ms_cfg
     if req_ms > 0:
-        total_ms = min(total_ms, req_ms)
+        total_ms = min(total_ms, int(req_ms))
 
     loaded_map = {i: (gt_seq, det_seq, native_frames) for (i, gt_seq, det_seq, native_frames, _dms) in loaded_info}
 
@@ -184,6 +202,7 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim
     sim_kwargs: Dict[str, Any] = dict(
         tick_ms=tick_ms,
         iou_thr=iou_thr,
+        iou_min_top_pct=float(iou_min_top_pct),
         tracker_cfg=tracker_cfg,
         seed=int(seed),
         verbose_engine=False,
@@ -209,12 +228,16 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim
     # Run-mode selection:
     #   - static: fixed equal weights, single-tracker evaluation baseline
     #   - dyn: dynamic weights, no retro-fill
-    #   - dyn-retro: dynamic weights + retro-fill (extra compute cost on boost)
+    #   - dyn-retro / dyn_retro: dynamic weights + retro-fill (extra compute cost on boost)
     if "run_mode" in sig.parameters:
-        sim_kwargs["run_mode"] = str(run_mode)
+        # Normalize aliases for newer simulator API.
+        mode = str(run_mode).strip().lower().replace("_", "-")
+        if mode == "dyn-retro":
+            mode = "dyn-retro"
+        sim_kwargs["run_mode"] = mode
     else:
         # Older simulator API (no run_mode): translate to flags if available.
-        mode = str(run_mode).strip().lower()
+        mode = str(run_mode).strip().lower().replace("_", "-")
         if mode == "static":
             pass
         elif mode == "dyn":
@@ -231,10 +254,11 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, sim
     return _jsonable({
         "config": str(config_path),
         "tick_ms": tick_ms,
+        "sim_ms": int(total_ms),
         "iou_thr": iou_thr,
         "det_score_thr": det_score_thr,
         "seed": int(seed),
-        "run_mode": str(run_mode),
+        "run_mode": str(run_mode).strip().lower().replace("_", "-"),
         "overall": overall.metrics,
         "channels": [
             {
@@ -261,7 +285,9 @@ def write_results_txt(out_path: Path, results: List[Dict[str, Any]]) -> None:
     for r in results:
         o = r.get("overall", {})
         lines.append(f"=== {Path(r['config']).name} ===")
-        lines.append(f"tick_ms={r.get('tick_ms')} seed={r.get('seed')} mode={r.get('run_mode','static')}")
+        lines.append(
+            f"tick_ms={r.get('tick_ms')} sim_ms={r.get('sim_ms')} seed={r.get('seed')} mode={r.get('run_mode','static')}"
+        )
         lines.append(f"OVERALL: motp={o.get('motp')} idf1={o.get('idf1')} idp={o.get('idp')} idr={o.get('idr')} "
                      f"idtp={o.get('idtp')} idfp={o.get('idfp')} idfn={o.get('idfn')} "
                      f"gt={o.get('total_gt')} pred={o.get('total_pred')} matches={o.get('total_matches')}")
@@ -273,14 +299,21 @@ def write_results_txt(out_path: Path, results: List[Dict[str, Any]]) -> None:
     out_path.write_text("\n".join(lines), encoding="utf-8")
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description="Batch-run 5 scene configs + 5 gt-scene configs and write compact summaries."
+        description=(
+            "Batch runner for HIEVE simulator configs. "
+            "By default it runs the 5 scene configs + 5 gt-scene configs shipped in this repo, "
+            "but you can pass --configs to run arbitrary JSON config paths/globs."
+        )
     )
     ap.add_argument("--seed", type=int, default=0, help="Random seed for scheduling.")
+
+    ap.add_argument("--iou-min-top-pct", type=float, default=0.95,
+                    help="Robust min-IoU percentile on DET side for dynamic-weight gating (default 0.95)")
     ap.add_argument(
         "--mode",
         type=str,
         default="static",
-        choices=["static", "dyn", "dyn-retro"],
+        choices=["static", "dyn", "dyn-retro", "dyn_retro"],
         help="Run mode: static (equal weights), dyn (dynamic weights, no retro), dyn-retro (dynamic+retro).",
     )
     ap.add_argument(
@@ -294,6 +327,18 @@ def main() -> int:
         type=int,
         default=SIM_DURATION_CAP_MS,
         help="Hard cap for simulation duration in ms (default 47000).",
+    )
+    ap.add_argument(
+        "--sim-ms",
+        type=int,
+        default=0,
+        help="Override requested simulation duration in ms (takes precedence over config.sim_duration_ms). 0 = follow config.",
+    )
+    ap.add_argument(
+        "--tick-ms",
+        type=int,
+        default=0,
+        help="Override tick_ms from config. 0 = follow config.",
     )
     ap.add_argument(
         "--max-frames",
@@ -319,13 +364,23 @@ def main() -> int:
         default=str(ROOT / "outputs"),
         help="Output directory for batch_*.json and batch_*.txt files.",
     )
+    ap.add_argument(
+        "--configs",
+        type=str,
+        default="",
+        help=(
+            "Comma-separated list of config JSON paths (or globs). "
+            "Example: 'scene*_config_fps_fixed.json,gt_scene*_fps_fixed.json'. "
+            "If empty, run the built-in 10 configs."
+        ),
+    )
     args = ap.parse_args()
 
     # Decide which modes to run.
     if args.modes.strip():
-        modes = [m.strip().lower() for m in args.modes.split(",") if m.strip()]
+        modes = [m.strip().lower().replace("_", "-") for m in args.modes.split(",") if m.strip()]
     else:
-        modes = [args.mode.strip().lower()]
+        modes = [args.mode.strip().lower().replace("_", "-")]
     for m in modes:
         if m not in {"static", "dyn", "dyn-retro"}:
             raise ValueError(f"Invalid mode in --modes: {m!r}")
@@ -333,8 +388,39 @@ def main() -> int:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 5 scene configs + 5 gt-scene configs = 10 results
-    configs = [ROOT / f"scene{i}_config_fps_fixed.json" for i in range(1, 6)] + [ROOT / f"gt_scene{i}_fps_fixed.json" for i in range(1, 6)]
+    # Decide which configs to run.
+    if args.configs.strip():
+        cfg_paths: List[Path] = []
+        for token in [t.strip() for t in args.configs.split(",") if t.strip()]:
+            # Resolve relative to repo root for convenience.
+            p = Path(token)
+            if not p.is_absolute():
+                p = (ROOT / p)
+            if any(ch in str(p) for ch in "*?["):
+                # pathlib does not support globbing directly on absolute patterns via Path().glob.
+                # If p is absolute, glob from its parent.
+                parent = p.parent if p.is_absolute() else ROOT
+                pattern = p.name if p.is_absolute() else str(p.relative_to(ROOT))
+                matches = sorted(parent.glob(pattern))
+            else:
+                matches = [p]
+            cfg_paths.extend(matches)
+        # De-dup while keeping order.
+        seen = set()
+        configs = []
+        for p in cfg_paths:
+            rp = str(p.resolve())
+            if rp not in seen:
+                seen.add(rp)
+                configs.append(Path(rp))
+        if not configs:
+            raise FileNotFoundError(f"No configs matched: {args.configs!r}")
+    else:
+        # Default: 5 scene configs + 5 gt-scene configs = 10 results
+        configs = [
+            *(ROOT / f"scene{i}_config_fps_fixed.json" for i in range(1, 6)),
+            *(ROOT / f"gt_scene{i}_fps_fixed.json" for i in range(1, 6)),
+        ]
 
     weight_log_dir = args.weight_log_dir.strip() or None
 
@@ -343,22 +429,28 @@ def main() -> int:
         for cfg_path in configs:
             if not cfg_path.exists():
                 raise FileNotFoundError(cfg_path)
-            print(f"[RUN] {cfg_path.name}  mode={mode}  seed={args.seed}  cap_ms={args.sim_cap_ms}")
+            print(
+                f"[RUN] {cfg_path.name}  mode={mode}  seed={args.seed}  cap_ms={args.sim_cap_ms}  sim_ms={args.sim_ms or 'cfg'}  tick_ms={args.tick_ms or 'cfg'}"
+            )
             results.append(
                 run_one_config(
                     cfg_path,
                     seed=int(args.seed),
                     max_frames=int(args.max_frames),
                     sim_cap_ms=int(args.sim_cap_ms),
+                    sim_ms_override=int(args.sim_ms),
                     run_mode=mode,
                     evolution_steps=int(args.evolution_steps),
                     weight_log_dir=weight_log_dir,
+                    tick_ms_override=int(args.tick_ms),
+                    iou_min_top_pct=float(args.iou_min_top_pct),
                 )
             )
 
         tag = mode.replace("-", "_")
-        out_json = out_dir / f"batch_10_results_{tag}.json"
-        out_txt = out_dir / f"batch_10_results_{tag}.txt"
+        n = len(configs)
+        out_json = out_dir / f"batch_{n}_results_{tag}.json"
+        out_txt = out_dir / f"batch_{n}_results_{tag}.txt"
         write_results(out_json, results)
         write_results_txt(out_txt, results)
         print(f"[OK] Wrote: {out_json}")

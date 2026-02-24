@@ -82,7 +82,7 @@ def _jsonable(x: Any) -> Any:
     return x
 
 
-def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0) -> Dict[str, Any]:
+def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, iou_min_top_pct: float = 0.95) -> Dict[str, Any]:
     cfg, base_dir = load_config(str(config_path))
 
     tick_ms = int(cfg.tick_ms)
@@ -184,6 +184,7 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0) -> 
         sources,
         tick_ms=tick_ms,
         iou_thr=iou_thr,
+        iou_min_top_pct=float(iou_min_top_pct),
         tracker_cfg=tracker_cfg,
         seed=int(seed),
         verbose_engine=False,
@@ -234,6 +235,8 @@ def write_results_txt(out_path: Path, results: List[Dict[str, Any]]) -> None:
 def _parse_args(argv: List[str]) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run all 24 split configs and write summary outputs.")
     p.add_argument("--seed", type=int, default=0, help="Random seed for the simulation.")
+    p.add_argument("--iou-min-top-pct", type=float, default=0.95,
+                   help="Robust min-IoU percentile on DET side for dynamic-weight gating (default 0.95).")
     p.add_argument(
         "--max-frames",
         type=int,
@@ -259,7 +262,7 @@ def main(argv: List[str] | None = None) -> int:
     results = []
     for cfg_path in configs:
         print(f"[RUN] {cfg_path.relative_to(ROOT)}")
-        results.append(run_one_config(cfg_path, seed=int(args.seed), max_frames=int(args.max_frames)))
+        results.append(run_one_config(cfg_path, seed=int(args.seed), max_frames=int(args.max_frames), iou_min_top_pct=float(args.iou_min_top_pct)))
 
     out_json = ROOT / "outputs" / "batch_split_24_results.json"
     out_txt = ROOT / "outputs" / "batch_split_24_results.txt"

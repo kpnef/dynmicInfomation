@@ -128,6 +128,10 @@ def run_one_config(
     weight_log_dir: Optional[str] = None,
     retro_max_gap_ms: Optional[int] = None,
     iou_min_top_pct: float = 0.95,
+    metric_iou_thr_override: float = 0.0,
+    gate_iou_thr_override: float = 0.0,
+    metrics_backend: str = "simple",
+
 ) -> Dict[str, Any]:
     cfg, base_dir = load_config(str(config_path))
 
@@ -136,10 +140,22 @@ def run_one_config(
     if int(tick_ms_override) > 0:
         tick_ms = int(tick_ms_override)
 
-    iou_thr = float(cfg.iou_thr)
+    # Resolve thresholds:
+    # - metric_iou_thr: used for MOTP/IDF1 evaluation
+    # - gate_iou_thr: used for dynamic-weight gating (boost/decay/retro)
+    # Backward compatible: if config doesn't have metric_iou_thr/gate_iou_thr, fall back to cfg.iou_thr.
+    metric_iou_thr = float(getattr(cfg, "metric_iou_thr", cfg.iou_thr))
+    gate_iou_thr = float(getattr(cfg, "gate_iou_thr", cfg.iou_thr))
+    if float(metric_iou_thr_override) > 0:
+        metric_iou_thr = float(metric_iou_thr_override)
+    if float(gate_iou_thr_override) > 0:
+        gate_iou_thr = float(gate_iou_thr_override)
+    
+    # Keep legacy name for old simulator signatures that only accept iou_thr.
+    iou_thr = float(metric_iou_thr)
+    
     det_score_thr = float(cfg.det_score_thr)
     tracker_cfg = dict(cfg.tracker_cfg or {})
-
     # Prepare placeholders (keep stable indices for cfg.sources).
     sources: List[SourceSpec] = []
     for s in cfg.sources:
@@ -252,6 +268,13 @@ def run_one_config(
     )
 
     sig = inspect.signature(run_simulation_sources)
+# Pass-through only if simulator supports these newer parameters.
+if "metric_iou_thr" in sig.parameters:
+    sim_kwargs["metric_iou_thr"] = float(metric_iou_thr)
+if "gate_iou_thr" in sig.parameters:
+    sim_kwargs["gate_iou_thr"] = float(gate_iou_thr)
+if "metrics_backend" in sig.parameters:
+    sim_kwargs["metrics_backend"] = str(metrics_backend)
 
     # Evolution (stage metrics) can be expensive. Default to OFF unless explicitly requested.
     if "evolution_steps" in sig.parameters:
@@ -307,6 +330,9 @@ def run_one_config(
             "tick_ms": tick_ms,
             "sim_ms": int(total_ms),
             "iou_thr": iou_thr,
+            "metric_iou_thr": float(metric_iou_thr),
+            "gate_iou_thr": float(gate_iou_thr),
+            "metrics_backend": str(metrics_backend),
             "det_score_thr": det_score_thr,
             "seed": int(seed),
             "run_mode": mode_norm,
@@ -342,7 +368,7 @@ def write_results_txt(out_path: Path, results: List[Dict[str, Any]]) -> None:
         if r.get("retro_max_gap_ms") is not None:
             extras.append(f"retro_max_gap_ms={r.get('retro_max_gap_ms')}")
         lines.append(
-            f"tick_ms={r.get('tick_ms')} sim_ms={r.get('sim_ms')} seed={r.get('seed')} mode={r.get('run_mode','static')} "
+            f"tick_ms={r.get('tick_ms')} sim_ms={r.get('sim_ms')} seed={r.get('seed')} mode={r.get('run_mode','static')} metric_iou_thr={r.get('metric_iou_thr')} gate_iou_thr={r.get('gate_iou_thr')} backend={r.get('metrics_backend')} "
             + (" ".join(extras) if extras else "")
         )
         lines.append(
@@ -372,6 +398,12 @@ def main() -> int:
 
     ap.add_argument("--iou-min-top-pct", type=float, default=0.95,
                     help="Robust min-IoU percentile on DET side for dynamic-weight gating (default 0.95)")
+    ap.add_argument("--metric-iou-thr", type=float, default=0.0,
+                help="IoU threshold used for evaluation metrics (MOTP/IDF1). 0 = follow config (metric_iou_thr or iou_thr).")
+    ap.add_argument("--gate-iou-thr", type=float, default=0.0,
+                help="IoU threshold used for dynamic-weight gating (boost/decay/retro). 0 = follow config (gate_iou_thr or iou_thr).")
+    ap.add_argument("--metrics-backend", type=str, default="simple", choices=["simple", "motmetrics"],
+                help="Evaluator backend: simple (built-in) or motmetrics (3rd-party, requires installing motmetrics).")
     ap.add_argument(
         "--mode",
         type=str,
@@ -480,7 +512,8 @@ def main() -> int:
             print(
                 f"[RUN] {cfg_path.name}  mode={mode}  seed={args.seed}  "
                 f"cap_ms={args.sim_cap_ms}  sim_ms={args.sim_ms or 'cfg'}  tick_ms={args.tick_ms or 'cfg'}  "
-                f"retro_max_gap_ms={(retro_arg or 'cfg/default') if mode=='dyn-retro' else 'n/a'}"
+                f"retro_max_gap_ms={(retro_arg or 'cfg/default') if mode=='dyn-retro' else 'n/a'}  "
+                f"metric_iou_thr={args.metric_iou_thr or 'cfg'}  gate_iou_thr={args.gate_iou_thr or 'cfg'}  backend={args.metrics_backend}"
             )
             results.append(
                 run_one_config(
@@ -491,6 +524,9 @@ def main() -> int:
                     sim_ms_override=int(args.sim_ms),
                     tick_ms_override=int(args.tick_ms),
                     iou_min_top_pct=float(args.iou_min_top_pct),
+                    metric_iou_thr_override=float(args.metric_iou_thr),
+                    gate_iou_thr_override=float(args.gate_iou_thr),
+                    metrics_backend=str(args.metrics_backend),
                     run_mode=mode,
                     evolution_steps=int(args.evolution_steps),
                     weight_log_dir=weight_log_dir,

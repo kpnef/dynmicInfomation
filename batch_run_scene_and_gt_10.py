@@ -11,6 +11,7 @@ Notes:
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from dataclasses import asdict
@@ -79,7 +80,7 @@ def _jsonable(x: Any) -> Any:
     return x
 
 
-def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0) -> Dict[str, Any]:
+def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0, iou_min_top_pct: float = 0.95) -> Dict[str, Any]:
     cfg, base_dir = load_config(str(config_path))
 
     tick_ms = int(cfg.tick_ms)
@@ -176,6 +177,7 @@ def run_one_config(config_path: Path, *, seed: int = 0, max_frames: int = 0) -> 
         sources,
         tick_ms=tick_ms,
         iou_thr=iou_thr,
+        iou_min_top_pct=float(iou_min_top_pct),
         tracker_cfg=tracker_cfg,
         seed=int(seed),
         verbose_engine=False,
@@ -223,7 +225,13 @@ def write_results_txt(out_path: Path, results: List[Dict[str, Any]]) -> None:
                          f"motp={m.get('motp')} idf1={m.get('idf1')} idp={m.get('idp')} idr={m.get('idr')}")
         lines.append("")
     out_path.write_text("\n".join(lines), encoding="utf-8")
-def main() -> int:
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description="Batch run 10 configs (scene1-5 + gt_scene1-5)")
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--iou-min-top-pct", type=float, default=0.95,
+                    help="Robust min-IoU percentile on DET side for dynamic-weight gating (default 0.95)")
+    args = ap.parse_args(argv)
+
     # 5 scene configs + 5 gt-scene configs = 10 results
     configs = [ROOT / f"scene{i}_config_fps_fixed.json" for i in range(1, 6)] +               [ROOT / f"gt_scene{i}_fps_fixed.json" for i in range(1, 6)]
 
@@ -232,7 +240,7 @@ def main() -> int:
         if not cfg_path.exists():
             raise FileNotFoundError(cfg_path)
         print(f"[RUN] {cfg_path.name}")
-        results.append(run_one_config(cfg_path, seed=0))
+        results.append(run_one_config(cfg_path, seed=int(args.seed), iou_min_top_pct=float(args.iou_min_top_pct)))
 
     out_json = ROOT / "outputs" / "batch_10_results.json"
     out_txt = ROOT / "outputs" / "batch_10_results.txt"
